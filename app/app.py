@@ -1,4 +1,5 @@
-from flask import Flask, render_template, request, Markup
+from flask import Flask, render_template, request
+from markupsafe import Markup
 import numpy as np
 import pandas as pd
 from utils.fertilizer import fertilizer_dic
@@ -6,7 +7,7 @@ import requests
 import config
 import pickle
 
-crop_recommendation_model_path = 'models/RandomForest.pkl'
+crop_recommendation_model_path = '../models/RandomForest.pkl'
 crop_recommendation_model = pickle.load(
     open(crop_recommendation_model_path, 'rb'))
 
@@ -121,3 +122,6 @@ def fert_recommend():
     response = Markup(str(fertilizer_dic[key]))
 
     return render_template('fertilizer-result.html', recommendation=response, title=title)
+
+if __name__ == '__main__':
+    app.run(debug=True)
