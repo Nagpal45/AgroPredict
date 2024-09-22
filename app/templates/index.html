@@ -8,44 +8,48 @@
 	</div>
 
 
-	<div class="aboutCont">
-		<h3> About Us</h3>
-		<div class="infoCont">
-			<div class="infoTextCont">
-				<h4>Improving Agriculture, Improving Lives, Cultivating Crops To Make Farmers Increase
-					Profit.</h4>
-				<p>We use state-of-the-art machine learning and deep learning technologies to help you
-					guide through
-					the entire farming process. Make informed decisions to understand the demographics of your area,
-					understand the
-					factors that affect your crop and keep them healthy for a super awesome successful yield.</p>
-			</div>
-			<div class="infoImgCont">
-				<img src="{{ url_for('static', filename='images/1.jpg') }}" alt="" />
+	<div class="about">
+		<div class="aboutCont">
+			<h3> About Us</h3>
+			<div class="infoCont">
+				<div class="infoTextCont">
+					<h4>Improving Agriculture, Improving Lives, Cultivating Crops To Make Farmers Increase
+						Profit.</h4>
+					<p>We use state-of-the-art machine learning and deep learning technologies to help you
+						guide through
+						the entire farming process. Make informed decisions to understand the demographics of your area,
+						understand the
+						factors that affect your crop and keep them healthy for a super awesome successful yield.</p>
+				</div>
+				<div class="infoImgCont">
+					<img src="{{ url_for('static', filename='images/1.jpg') }}" alt="" />
+				</div>
 			</div>
 		</div>
 	</div>
 
-	<div class="servicesCont">
-		<h3> Our Services</h3>
-		<div class="serviceList">
-			<div class="service">
-				<img src="{{ url_for('static', filename='images/farm_background.jpg') }}" alt="" />
-				<a href="{{ url_for('crop_recommend') }}">
-					<div class="serviceInfo">
-						<h4>Crop Recommendation</h4>
-						<p> Recommendation about the type of crops to be cultivated which is best suited for the respective conditions</p>
-					</div>
-				</a>
-			</div>
-			<div class="service">
-				<img src="{{ url_for('static', filename='images/2.jpg') }}" alt="" />
-				<a href="{{ url_for('fertilizer_recommendation') }}">
-					<div class="serviceInfo">
-						<h4>Fertilizer Suggestions</h4>
-						<p>Recommendation about the type of fertilizer best suited for the particular soil and the recommended crop</p>
-					</div>
-				</a>
+	<div class="services">
+		<div class="servicesCont">
+			<h3> Our Services</h3>
+			<div class="serviceList">
+				<div class="service">
+					<img src="{{ url_for('static', filename='images/farm_background.jpg') }}" alt="" />
+					<a href="{{ url_for('crop_recommend') }}">
+						<div class="serviceInfo">
+							<h4>Crop Recommendation</h4>
+							<p> Recommendation about the type of crops to be cultivated which is best suited for the respective conditions</p>
+						</div>
+					</a>
+				</div>
+				<div class="service">
+					<img src="{{ url_for('static', filename='images/2.jpg') }}" alt="" />
+					<a href="{{ url_for('fertilizer_recommendation') }}">
+						<div class="serviceInfo">
+							<h4>Fertilizer Suggestions</h4>
+							<p>Recommendation about the type of fertilizer best suited for the particular soil and the recommended crop</p>
+						</div>
+					</a>
+				</div>
 			</div>
 		</div>
 	</div>
