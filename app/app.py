@@ -36,19 +36,19 @@ app = Flask(__name__)
 
 @ app.route('/')
 def home():
-    title = 'Harvestify - Home'
+    title = 'AgroPredict - Home'
     return render_template('index.html', title=title)
 
 # render crop recommendation form page
 @ app.route('/crop-recommend')
 def crop_recommend():
-    title = 'Harvestify - Crop Recommendation'
+    title = 'AgroPredict - Crop Recommendation'
     return render_template('crop.html', title=title)
 
 # render fertilizer recommendation form page
 @ app.route('/fertilizer')
 def fertilizer_recommendation():
-    title = 'Harvestify - Fertilizer Suggestion'
+    title = 'AgroPredict - Fertilizer Suggestion'
 
     return render_template('fertilizer.html', title=title)
 
@@ -56,7 +56,7 @@ def fertilizer_recommendation():
 # render crop recommendation result page
 @ app.route('/crop-predict', methods=['POST'])
 def crop_prediction():
-    title = 'Harvestify - Crop Recommendation'
+    title = 'AgroPredict - Crop Recommendation'
 
     if request.method == 'POST':
         N = int(request.form['nitrogen'])
@@ -83,7 +83,7 @@ def crop_prediction():
         
 @ app.route('/fertilizer-predict', methods=['POST'])
 def fert_recommend():
-    title = 'Harvestify - Fertilizer Suggestion'
+    title = 'AgroPredict - Fertilizer Suggestion'
 
     crop_name = str(request.form['cropname'])
     N = int(request.form['nitrogen'])
