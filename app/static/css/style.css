@@ -275,6 +275,28 @@ a.move-top {
 	flex-direction: column;
 }
 
+.fertForm{
+	width: 80%;
+	height: 80%;
+	display: flex;
+	align-items: center;
+	justify-content: flex-start;
+	flex-direction: column;
+}
+
+.fertForm form{
+	width: 60%;
+	height: 63%;
+	background-color: rgb(150, 255, 178);
+	border-radius: 30px;
+	display: flex;
+	align-items: flex-start;
+	justify-content: flex-start;
+	padding: 40px;
+	gap: 20px;
+	flex-direction: column;
+}
+
 .cropForm h2{
 	font-size: 30px;
 	font-weight: bold;
@@ -293,7 +315,15 @@ a.move-top {
 	flex-direction: column;
 }
 
-.formInp{
+.fertFormInp select{
+	width: 71%;
+	height: 35px;
+}
+.fertFormInp label{
+	font-size: 22px;
+}
+
+.formInp, .fertFormInp{
 	width: 100%;
 	display: flex;
 	align-items: center;
@@ -334,12 +364,18 @@ a.move-top {
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	font-size: 30px;
 }
 
 
 .cropPred h1{
+	font-size: 30px;
 	width: 50%;
 	text-align: center;
 	margin-bottom: 100px;
+}
+.cropPred p{
+	font-size: 24px;
+	width: 80%;
+	text-align: left;
+	font-weight: 600;
 }
