@@ -3,6 +3,7 @@ body {
     margin: 0;
     background: #fff;
 	font-family: 'Thasadith', sans-serif;
+	padding: 0;
 }
 
 html {
@@ -358,13 +359,6 @@ a.move-top {
 	color: white;
 }
 
-.cropPred{
-	width: 100%;
-	height: calc(100vh - 205px);
-	display: flex;
-	align-items: center;
-	justify-content: center;
-}
 
 
 .cropPred h1{
@@ -378,4 +372,40 @@ a.move-top {
 	width: 80%;
 	text-align: left;
 	font-weight: 600;
+}
+
+.disease{
+	height: calc(100vh - 180px);
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	flex-direction: column;
+}
+
+.disease h2{
+	font-size: 50px;
+}
+
+.disease h3{
+	font-size: 40px;
+}
+
+.disease form{
+	margin-bottom: 100px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	flex-direction: row;
+}
+
+.disease button{
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	background-color: rgb(150, 255, 178);
+	border: none;
+	border-radius: 50px;
+	font-weight: bold;
+	font-size: 20px;
+	padding: 10px 40px;
 }

@@ -1,0 +1,26 @@
+{% extends 'layout.html' %} {% block body %}
+<div class="disease">
+  <h2>
+    <b>Find out which disease has been caught by your plant</b>
+  </h2>
+  <h3><b>Please Upload The Image</b></h3>
+  <form method=post enctype=multipart/form-data>
+    <input type="file" name="file" id="inputfile" onchange="preview_image(event)">
+    <img id="output-image" />
+    <button type="submit">Predict</button>
+  </form>
+</div>
+
+<script type="text/javascript">
+  function preview_image(event) {
+    var reader = new FileReader();
+    reader.onload = function () {
+      var output = document.getElementById('output-image')
+      output.src = reader.result;
+    }
+    reader.readAsDataURL(event.target.files[0]);
+  }
+</script>
+
+</div>
+{% endblock %}
