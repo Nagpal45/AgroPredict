@@ -72,16 +72,25 @@ def weather_fetch(city_name):
     base_url = "http://api.openweathermap.org/data/2.5/weather?"
 
     complete_url = base_url + "appid=" + api_key + "&q=" + city_name
-    response = requests.get(complete_url)
-    x = response.json()
-
-    if x["cod"] != "404":
-        y = x["main"]
-
-        temperature = round((y["temp"] - 273.15), 2)
-        humidity = y["humidity"]
-        return temperature, humidity
-    else:
+    
+    try:
+        response = requests.get(complete_url)
+        x = response.json()
+        
+        # Print response for debugging
+        print(f"API Response: {x}")
+        
+        # Check if response is successful and contains required data
+        if response.status_code == 200 and "main" in x:
+            y = x["main"]
+            temperature = round((y["temp"] - 273.15), 2)
+            humidity = y["humidity"]
+            return temperature, humidity
+        else:
+            print(f"Error in API response: {x}")
+            return None
+    except Exception as e:
+        print(f"Exception during weather fetch: {e}")
         return None
 
 def predict_image(img, model=disease_model):
@@ -218,5 +227,5 @@ def disease_prediction():
     return render_template('disease.html', title=title)
 
 
-if __name__ == '__main__':
-    app.run(debug=True)
+if __name__ == "__main__":
+    app.run(debug=True, host='0.0.0.0')

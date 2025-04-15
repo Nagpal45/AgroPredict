@@ -1,0 +1,172 @@
+import React, { useState } from 'react';
+import { View, StyleSheet, ScrollView, Alert } from 'react-native';
+import { TextInput, Button, Text, Title, useTheme, HelperText } from 'react-native-paper';
+import { router } from 'expo-router';
+import axios from 'axios';
+
+// Base URL for the backend
+const BASE_URL = 'http://192.168.1.100:5000';
+
+export default function FertilizerScreen() {
+  const theme = useTheme();
+  const [cropName, setCropName] = useState('');
+  const [nitrogen, setNitrogen] = useState('');
+  const [phosphorous, setPhosphorous] = useState('');
+  const [potassium, setPotassium] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+
+  const validateInputs = () => {
+    if (!cropName || !nitrogen || !phosphorous || !potassium) {
+      setError('All fields are required');
+      return false;
+    }
+    
+    if (isNaN(Number(nitrogen)) || isNaN(Number(phosphorous)) || isNaN(Number(potassium))) {
+      setError('Soil values must be numbers');
+      return false;
+    }
+    
+    return true;
+  };
+
+  const getFertilizerRecommendation = async (data) => {
+    try {
+      const response = await axios.post(`${BASE_URL}/fertilizer-predict`, data, {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+      return response.data;
+    } catch (error) {
+      console.error('Error getting fertilizer recommendation:', error);
+      throw error;
+    }
+  };
+
+  const handleSubmit = async () => {
+    try {
+      setError('');
+      
+      if (!validateInputs()) {
+        return;
+      }
+      
+      setLoading(true);
+      
+      const data = {
+        cropname: cropName.toLowerCase(),
+        nitrogen: Number(nitrogen),
+        phosphorous: Number(phosphorous),
+        pottasium: Number(potassium)
+      };
+      
+      const response = await getFertilizerRecommendation(data);
+      
+      // Navigate to result page with data
+      router.navigate({
+        pathname: "/result",
+        params: { 
+          type: 'fertilizer',
+          data: JSON.stringify(response)
+        }
+      });
+    } catch (error) {
+      console.error('Error getting fertilizer recommendation:', error);
+      Alert.alert('Error', 'Failed to get recommendation. Please try again.');
+      setError('Failed to get recommendation. Please try again.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <ScrollView style={styles.container}>
+      <View style={styles.content}>
+        <Title style={styles.title}>Fertilizer Recommendation</Title>
+        <Text style={styles.subtitle}>
+          Enter crop and soil details to get the best fertilizer recommendation
+        </Text>
+
+        <TextInput
+          label="Crop Name"
+          value={cropName}
+          onChangeText={setCropName}
+          style={styles.input}
+          mode="outlined"
+          placeholder="e.g., rice, maize, apple"
+        />
+        
+        <TextInput
+          label="Nitrogen (N) Content"
+          value={nitrogen}
+          onChangeText={setNitrogen}
+          style={styles.input}
+          keyboardType="numeric"
+          mode="outlined"
+        />
+        
+        <TextInput
+          label="Phosphorous (P) Content"
+          value={phosphorous}
+          onChangeText={setPhosphorous}
+          style={styles.input}
+          keyboardType="numeric"
+          mode="outlined"
+        />
+        
+        <TextInput
+          label="Potassium (K) Content"
+          value={potassium}
+          onChangeText={setPotassium}
+          style={styles.input}
+          keyboardType="numeric"
+          mode="outlined"
+        />
+
+        {error ? <HelperText type="error">{error}</HelperText> : null}
+        
+        <Button
+          mode="contained"
+          onPress={handleSubmit}
+          style={[styles.button, { backgroundColor: theme.colors.primary }]}
+          loading={loading}
+          disabled={loading}
+        >
+          Get Recommendation
+        </Button>
+      </View>
+    </ScrollView>
+  );
+}
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#f5f5f5',
+  },
+  content: {
+    padding: 20,
+  },
+  title: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    color: '#2E7D32',
+    marginBottom: 10,
+    textAlign: 'center',
+  },
+  subtitle: {
+    fontSize: 16,
+    color: '#666',
+    marginBottom: 20,
+    textAlign: 'center',
+  },
+  input: {
+    marginBottom: 15,
+    backgroundColor: '#fff',
+  },
+  button: {
+    marginTop: 20,
+    paddingVertical: 6,
+  },
+}); 
