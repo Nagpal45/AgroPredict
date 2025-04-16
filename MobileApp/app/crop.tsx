@@ -4,12 +4,15 @@ import { TextInput, Button, Text, Title, useTheme, HelperText } from 'react-nati
 import { router } from 'expo-router';
 import axios from 'axios';
 import { API_BASE_URL } from './config';
+import { useTranslation } from 'react-i18next';
+import LanguageSelector from '../components/LanguageSelector';
 
 // Base URL for the backend
 const BASE_URL = 'http://192.168.1.3:5000';
 
 export default function CropScreen() {
   const theme = useTheme();
+  const { t } = useTranslation();
   const [nitrogen, setNitrogen] = useState('');
   const [phosphorous, setPhosphorous] = useState('');
   const [potassium, setPotassium] = useState('');
@@ -112,14 +115,15 @@ export default function CropScreen() {
 
   return (
     <ScrollView style={styles.container}>
+      <LanguageSelector />
       <View style={styles.content}>
-        <Title style={styles.title}>Crop Recommendation</Title>
+        <Title style={styles.title}>{t('crop.title')}</Title>
         <Text style={styles.subtitle}>
-          Enter soil and location details to get personalized crop recommendations
+          {t('crop.description')}
         </Text>
 
         <TextInput
-          label="Nitrogen (N)"
+          label={t('crop.inputLabels.nitrogen')}
           value={nitrogen}
           onChangeText={setNitrogen}
           style={styles.input}
@@ -128,7 +132,7 @@ export default function CropScreen() {
         />
         
         <TextInput
-          label="Phosphorous (P)"
+          label={t('crop.inputLabels.phosphorus')}
           value={phosphorous}
           onChangeText={setPhosphorous}
           style={styles.input}
@@ -137,7 +141,7 @@ export default function CropScreen() {
         />
         
         <TextInput
-          label="Potassium (K)"
+          label={t('crop.inputLabels.potassium')}
           value={potassium}
           onChangeText={setPotassium}
           style={styles.input}
@@ -146,7 +150,7 @@ export default function CropScreen() {
         />
         
         <TextInput
-          label="pH Value"
+          label={t('crop.inputLabels.ph')}
           value={ph}
           onChangeText={setPh}
           style={styles.input}
@@ -155,7 +159,7 @@ export default function CropScreen() {
         />
         
         <TextInput
-          label="Rainfall (mm)"
+          label={t('crop.inputLabels.rainfall')}
           value={rainfall}
           onChangeText={setRainfall}
           style={styles.input}
@@ -164,7 +168,7 @@ export default function CropScreen() {
         />
         
         <TextInput
-          label="City (for weather data)"
+          label={t('crop.inputLabels.city')}
           value={city}
           onChangeText={setCity}
           style={styles.input}
@@ -180,7 +184,7 @@ export default function CropScreen() {
           loading={loading}
           disabled={loading}
         >
-          Get Recommendation
+          {t('crop.getRecommendation')}
         </Button>
       </View>
     </ScrollView>

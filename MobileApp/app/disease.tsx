@@ -5,9 +5,12 @@ import { router } from 'expo-router';
 import * as ImagePicker from 'expo-image-picker';
 import axios from 'axios';
 import { API_BASE_URL } from './config';
+import { useTranslation } from 'react-i18next';
+import LanguageSelector from '../components/LanguageSelector';
 
 export default function DiseaseScreen() {
   const theme = useTheme();
+  const { t } = useTranslation();
   const [image, setImage] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
@@ -120,10 +123,11 @@ export default function DiseaseScreen() {
 
   return (
     <ScrollView style={styles.container}>
+      <LanguageSelector />
       <View style={styles.content}>
-        <Title style={styles.title}>Plant Disease Detection</Title>
+        <Title style={styles.title}>{t('disease.title')}</Title>
         <Text style={styles.subtitle}>
-          Upload or take a photo of a plant leaf to detect diseases
+          {t('disease.description')}
         </Text>
 
         <View style={styles.imageContainer}>
@@ -131,7 +135,7 @@ export default function DiseaseScreen() {
             <Image source={{ uri: image }} style={styles.image} />
           ) : (
             <View style={styles.placeholderImage}>
-              <Text style={styles.placeholderText}>No image selected</Text>
+              <Text style={styles.placeholderText}>{t('disease.instructions')}</Text>
             </View>
           )}
         </View>
@@ -144,7 +148,7 @@ export default function DiseaseScreen() {
             icon="image"
             disabled={loading}
           >
-            Pick Image
+            {t('disease.uploadImage')}
           </Button>
           
           <Button
@@ -154,7 +158,7 @@ export default function DiseaseScreen() {
             icon="camera"
             disabled={loading}
           >
-            Take Photo
+            {t('disease.takePhoto')}
           </Button>
         </View>
 
@@ -167,7 +171,7 @@ export default function DiseaseScreen() {
             style={[styles.analyzeButton, { backgroundColor: theme.colors.primary }]}
             disabled={!image || loading}
           >
-            Analyze Plant
+            {t('disease.analyze')}
           </Button>
         )}
       </View>

@@ -2,6 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { View, StyleSheet, ScrollView } from 'react-native';
 import { Card, Title, Text, Button, useTheme } from 'react-native-paper';
 import { useLocalSearchParams, useRouter } from 'expo-router';
+import { useTranslation } from 'react-i18next';
+import LanguageSelector from '../components/LanguageSelector';
 
 interface ResultData {
   prediction: string;
@@ -20,6 +22,7 @@ export default function ResultScreen() {
   const params = useLocalSearchParams();
   const router = useRouter();
   const theme = useTheme();
+  const { t } = useTranslation();
   const [resultData, setResultData] = useState<ResultData | null>(null);
 
   useEffect(() => {
@@ -40,7 +43,7 @@ export default function ResultScreen() {
       <View>
         <Card style={styles.card}>
           <Card.Content>
-            <Title style={styles.resultTitle}>Recommended Crop</Title>
+            <Title style={styles.resultTitle}>{t('result.recommendationTitle')}</Title>
             <Text style={styles.resultValue}>{resultData?.prediction || 'Not available'}</Text>
             
             <View style={styles.divider} />
@@ -58,26 +61,26 @@ export default function ResultScreen() {
         
         <Card style={styles.card}>
           <Card.Content>
-            <Title style={styles.sectionTitle}>Soil Parameters</Title>
+            <Title style={styles.sectionTitle}>{t('result.detailsTitle')}</Title>
             <View style={styles.parametersContainer}>
               <View style={styles.parameter}>
-                <Text style={styles.parameterLabel}>Nitrogen (N)</Text>
+                <Text style={styles.parameterLabel}>{t('crop.inputLabels.nitrogen')}</Text>
                 <Text style={styles.parameterValue}>{resultData?.nitrogen || 'N/A'}</Text>
               </View>
               <View style={styles.parameter}>
-                <Text style={styles.parameterLabel}>Phosphorus (P)</Text>
+                <Text style={styles.parameterLabel}>{t('crop.inputLabels.phosphorus')}</Text>
                 <Text style={styles.parameterValue}>{resultData?.phosphorous || 'N/A'}</Text>
               </View>
               <View style={styles.parameter}>
-                <Text style={styles.parameterLabel}>Potassium (K)</Text>
+                <Text style={styles.parameterLabel}>{t('crop.inputLabels.potassium')}</Text>
                 <Text style={styles.parameterValue}>{resultData?.potassium || 'N/A'}</Text>
               </View>
               <View style={styles.parameter}>
-                <Text style={styles.parameterLabel}>pH Value</Text>
+                <Text style={styles.parameterLabel}>{t('crop.inputLabels.ph')}</Text>
                 <Text style={styles.parameterValue}>{resultData?.ph || 'N/A'}</Text>
               </View>
               <View style={styles.parameter}>
-                <Text style={styles.parameterLabel}>Rainfall</Text>
+                <Text style={styles.parameterLabel}>{t('crop.inputLabels.rainfall')}</Text>
                 <Text style={styles.parameterValue}>{resultData?.rainfall || 'N/A'} mm</Text>
               </View>
             </View>
@@ -163,8 +166,9 @@ export default function ResultScreen() {
 
   return (
     <ScrollView style={styles.container}>
+      <LanguageSelector />
       <View style={styles.content}>
-        <Title style={styles.title}>Your Results</Title>
+        <Title style={styles.title}>{t('result.title')}</Title>
         
         {renderResult()}
         
@@ -173,7 +177,7 @@ export default function ResultScreen() {
           onPress={() => router.back()}
           style={[styles.button, { backgroundColor: theme.colors.primary }]}
         >
-          Back
+          {t('result.backToHome')}
         </Button>
       </View>
     </ScrollView>

@@ -4,9 +4,12 @@ import { TextInput, Button, Text, Title, useTheme, HelperText } from 'react-nati
 import { router } from 'expo-router';
 import axios from 'axios';
 import { API_BASE_URL } from './config';
+import { useTranslation } from 'react-i18next';
+import LanguageSelector from '../components/LanguageSelector';
 
 export default function FertilizerScreen() {
   const theme = useTheme();
+  const { t } = useTranslation();
   const [cropName, setCropName] = useState('');
   const [nitrogen, setNitrogen] = useState('');
   const [phosphorous, setPhosphorous] = useState('');
@@ -98,14 +101,15 @@ export default function FertilizerScreen() {
 
   return (
     <ScrollView style={styles.container}>
+      <LanguageSelector />
       <View style={styles.content}>
-        <Title style={styles.title}>Fertilizer Recommendation</Title>
+        <Title style={styles.title}>{t('fertilizer.title')}</Title>
         <Text style={styles.subtitle}>
-          Enter crop and soil details to get the best fertilizer recommendation
+          {t('fertilizer.description')}
         </Text>
 
         <TextInput
-          label="Crop Name"
+          label={t('fertilizer.inputLabels.cropType')}
           value={cropName}
           onChangeText={setCropName}
           style={styles.input}
@@ -114,7 +118,7 @@ export default function FertilizerScreen() {
         />
         
         <TextInput
-          label="Nitrogen (N) Content"
+          label={t('fertilizer.inputLabels.nitrogen')}
           value={nitrogen}
           onChangeText={setNitrogen}
           style={styles.input}
@@ -123,7 +127,7 @@ export default function FertilizerScreen() {
         />
         
         <TextInput
-          label="Phosphorous (P) Content"
+          label={t('fertilizer.inputLabels.phosphorus')}
           value={phosphorous}
           onChangeText={setPhosphorous}
           style={styles.input}
@@ -132,7 +136,7 @@ export default function FertilizerScreen() {
         />
         
         <TextInput
-          label="Potassium (K) Content"
+          label={t('fertilizer.inputLabels.potassium')}
           value={potassium}
           onChangeText={setPotassium}
           style={styles.input}
@@ -149,7 +153,7 @@ export default function FertilizerScreen() {
           loading={loading}
           disabled={loading}
         >
-          Get Recommendation
+          {t('fertilizer.getRecommendation')}
         </Button>
       </View>
     </ScrollView>

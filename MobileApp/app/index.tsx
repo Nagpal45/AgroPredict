@@ -1,48 +1,52 @@
 import React from 'react';
 import { View, StyleSheet, ScrollView } from 'react-native';
 import { Card, Title, Text, useTheme } from 'react-native-paper';
+import { useTranslation } from 'react-i18next';
+import LanguageSelector from '../components/LanguageSelector';
 
 export default function HomeScreen() {
   const theme = useTheme();
+  const { t } = useTranslation();
 
   return (
     <ScrollView style={styles.container}>
+      <LanguageSelector />
+      
       <View style={styles.header}>
-        <Title style={styles.title}>AgroPredict Mobile</Title>
-        <Text style={styles.subtitle}>Agriculture Assistant for Smart Farming</Text>
+        <Title style={styles.title}>{t('home.appTitle')}</Title>
+        <Text style={styles.subtitle}>{t('home.subtitle')}</Text>
       </View>
 
       <Card style={styles.card}>
         <Card.Content>
-          <Title style={styles.cardTitle}>Welcome to AgroPredict</Title>
+          <Title style={styles.cardTitle}>{t('home.welcome')}</Title>
           <Text style={styles.cardText}>
-            This app helps farmers make better decisions using data-driven recommendations.
-            Use the tabs below to access different features.
+            {t('home.appDescription')}
           </Text>
         </Card.Content>
       </Card>
 
       <Card style={styles.card}>
         <Card.Content>
-          <Title style={styles.cardTitle}>Features</Title>
+          <Title style={styles.cardTitle}>{t('home.features')}</Title>
           <View style={styles.featureItem}>
-            <Text style={styles.featureTitle}>Crop Recommendation</Text>
+            <Text style={styles.featureTitle}>{t('features.cropRecommendation.title')}</Text>
             <Text style={styles.featureDescription}>
-              Get recommendations for the best crops to plant based on soil and weather conditions.
+              {t('features.cropRecommendation.description')}
             </Text>
           </View>
           
           <View style={styles.featureItem}>
-            <Text style={styles.featureTitle}>Fertilizer Recommendation</Text>
+            <Text style={styles.featureTitle}>{t('features.fertilizerRecommendation.title')}</Text>
             <Text style={styles.featureDescription}>
-              Find the optimal fertilizer based on your soil conditions and crop type.
+              {t('features.fertilizerRecommendation.description')}
             </Text>
           </View>
           
           <View style={styles.featureItem}>
-            <Text style={styles.featureTitle}>Plant Disease Detection</Text>
+            <Text style={styles.featureTitle}>{t('features.diseaseDetection.title')}</Text>
             <Text style={styles.featureDescription}>
-              Detect plant diseases by uploading images of affected plants.
+              {t('features.diseaseDetection.description')}
             </Text>
           </View>
         </Card.Content>
@@ -50,15 +54,15 @@ export default function HomeScreen() {
 
       <Card style={styles.card}>
         <Card.Content>
-          <Title style={styles.cardTitle}>How to Use</Title>
+          <Title style={styles.cardTitle}>{t('home.howToUse')}</Title>
           <Text style={styles.cardText}>
-            1. Navigate using the bottom tabs
+            {t('home.step1')}
           </Text>
           <Text style={styles.cardText}>
-            2. Enter required information or upload images
+            {t('home.step2')}
           </Text>
           <Text style={styles.cardText}>
-            3. View results and recommendations
+            {t('home.step3')}
           </Text>
         </Card.Content>
       </Card>
