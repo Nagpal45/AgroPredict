@@ -66,7 +66,17 @@ export default function TabLayout() {
             ),
           }}
         />
+      <Tabs.Screen
+        name="result"
+        options={{
+          title: 'Result',
+          tabBarIcon: ({ color, size }) => (
+            <MaterialCommunityIcons name="chart-box" size={size} color={color} />
+          ),
+        }}
+      />
       </Tabs>
+
       <StatusBar style="auto" />
     </PaperProvider>
   );

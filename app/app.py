@@ -161,8 +161,7 @@ def crop_prediction():
 
         else:
 
-            return render_template('try_again.html', title=title)
-        
+            return render_template('try_again.html', title=title)    
         
 @ app.route('/fertilizer-predict', methods=['POST'])
 def fert_recommend():
@@ -225,6 +224,136 @@ def disease_prediction():
         except:
             pass
     return render_template('disease.html', title=title)
+
+@app.route('/api/crop-predict', methods=['POST'])
+def api_crop_prediction():
+    if request.method == 'POST':
+        data = None
+        if request.form:
+            N = int(request.form['nitrogen'])
+            P = int(request.form['phosphorous'])
+            K = int(request.form['pottasium'])
+            ph = float(request.form['ph'])
+            rainfall = float(request.form['rainfall'])
+            city = request.form.get("city")
+        else:
+            data = request.get_json()
+            N = int(data['nitrogen'])
+            P = int(data['phosphorous'])
+            K = int(data['pottasium'])
+            ph = float(data['ph'])
+            rainfall = float(data['rainfall'])
+            city = data.get("city")
+
+        if weather_fetch(city) != None:
+            temperature, humidity = weather_fetch(city)
+            data = np.array([[N, P, K, temperature, humidity, ph, rainfall]])
+            my_prediction = crop_recommendation_model.predict(data)
+            final_prediction = my_prediction[0]
+
+            return {
+                'crop': final_prediction,
+                'success': True
+            }
+        else:
+            return {
+                'error': 'Weather data not available for this city',
+                'success': False
+            }
+    
+
+
+import re
+
+@app.route('/api/fertilizer-predict', methods=['POST'])
+def api_fertilizer_recommendation():
+    if request.method == 'POST':
+        if request.form:
+            crop_name = str(request.form['cropname'])
+            N = int(request.form['nitrogen'])
+            P = int(request.form['phosphorous'])
+            K = int(request.form['pottasium'])
+        else:
+            data = request.get_json()
+            crop_name = str(data['cropname'])
+            N = int(data['nitrogen'])
+            P = int(data['phosphorous'])
+            K = int(data['pottasium'])
+
+        df = pd.read_csv('../Data-processed/fertilizer.csv')
+
+        nr = df[df['Crop'] == crop_name]['N'].iloc[0]
+        pr = df[df['Crop'] == crop_name]['P'].iloc[0]
+        kr = df[df['Crop'] == crop_name]['K'].iloc[0]
+
+        n = nr - N
+        p = pr - P
+        k = kr - K
+        temp = {abs(n): "N", abs(p): "P", abs(k): "K"}
+        max_value = temp[max(temp.keys())]
+        if max_value == "N":
+            if n < 0:
+                key = 'NHigh'
+            else:
+                key = "Nlow"
+        elif max_value == "P":
+            if p < 0:
+                key = 'PHigh'
+            else:
+                key = "Plow"
+        else:
+            if k < 0:
+                key = 'KHigh'
+            else:
+                key = "Klow"
+
+        # Get raw recommendation with HTML tags
+        raw_recommendation = str(fertilizer_dic[key])
+        
+        # Strip HTML tags for API response
+        # This pattern removes all HTML tags
+        clean_recommendation = re.sub(r'<.*?>', '', raw_recommendation)
+        
+        # Replace <br> tags with newlines
+        clean_recommendation = clean_recommendation.replace('<br>', '\n')
+        
+        return {
+            'recommendation': clean_recommendation,
+            'success': True
+        }
+
+@app.route('/api/disease-predict', methods=['POST'])
+def api_disease_prediction():
+    if request.method == 'POST':
+        if 'file' not in request.files:
+            return {
+                'error': 'No file part',
+                'success': False
+            }
+            
+        file = request.files.get('file')
+        if not file:
+            return {
+                'error': 'No file selected',
+                'success': False
+            }
+            
+        try:
+            img = file.read()
+            prediction = predict_image(img)
+            result = str(disease_dic[prediction])
+            clean_result = re.sub(r'<.*?>', '', result)
+            
+            return {
+                'disease': prediction,
+                'recommendation': clean_result,
+                'success': True
+            }
+        except Exception as e:
+            return {
+                'error': str(e),
+                'success': False
+            }
 
 
 if __name__ == "__main__":

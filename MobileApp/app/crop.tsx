@@ -3,9 +3,10 @@ import { View, StyleSheet, ScrollView, Alert } from 'react-native';
 import { TextInput, Button, Text, Title, useTheme, HelperText } from 'react-native-paper';
 import { router } from 'expo-router';
 import axios from 'axios';
+import { API_BASE_URL } from './config';
 
 // Base URL for the backend
-const BASE_URL = 'http://192.168.1.6:5000';
+const BASE_URL = 'http://192.168.1.3:5000';
 
 export default function CropScreen() {
   const theme = useTheme();
@@ -33,19 +34,35 @@ export default function CropScreen() {
     return true;
   };
 
-  const getCropRecommendation = async (data) => {
-    try {
-      const response = await axios.post(`${BASE_URL}/crop-predict`, data, {
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
-      return response.data;
-    } catch (error) {
-      console.error('Error getting crop recommendation:', error);
-      throw error;
-    }
-  };
+  const getCropRecommendation = async (data: {
+  nitrogen: number;
+  phosphorous: number;
+  pottasium: number;
+  ph: number;
+  rainfall: number;
+  city: string;
+}) => {
+  try {
+    const formData = new FormData();
+    formData.append('nitrogen', data.nitrogen.toString());
+    formData.append('phosphorous', data.phosphorous.toString());
+    formData.append('pottasium', data.pottasium.toString());
+    formData.append('ph', data.ph.toString());
+    formData.append('rainfall', data.rainfall.toString());
+    formData.append('city', data.city);
+
+    const response = await axios.post(`${API_BASE_URL}/api/crop-predict`, formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+        'Accept': 'application/json',
+      },
+    });
+    return response.data;
+  } catch (error) {
+    console.error('Error getting crop recommendation:', error);
+    throw error;
+  }
+};
 
   const handleSubmit = async () => {
     try {
@@ -66,14 +83,22 @@ export default function CropScreen() {
         city: city
       };
       
-      const response = await getCropRecommendation(data);
+      const response = await getCropRecommendation(data);    
       
       // Navigate to result page with data
       router.navigate({
         pathname: "/result",
         params: { 
           type: 'crop',
-          data: JSON.stringify(response)
+          data: JSON.stringify({
+            prediction: response.crop,
+            nitrogen: data.nitrogen,
+            phosphorous: data.phosphorous,
+            potassium: data.pottasium,
+            ph: data.ph,
+            rainfall: data.rainfall,
+            city: data.city
+          })
         }
       });
     } catch (error) {

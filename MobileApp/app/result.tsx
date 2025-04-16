@@ -3,16 +3,31 @@ import { View, StyleSheet, ScrollView } from 'react-native';
 import { Card, Title, Text, Button, useTheme } from 'react-native-paper';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 
+interface ResultData {
+  prediction: string;
+  nitrogen: number;
+  phosphorous: number;
+  potassium: number;
+  ph: number;
+  rainfall: number;
+  city: string;
+  recommendation: string;
+  crop: string;
+  disease: string;
+}
+
 export default function ResultScreen() {
   const params = useLocalSearchParams();
   const router = useRouter();
   const theme = useTheme();
-  const [resultData, setResultData] = useState(null);
+  const [resultData, setResultData] = useState<ResultData | null>(null);
 
   useEffect(() => {
     if (params.data) {
       try {
-        const parsedData = JSON.parse(params.data);
+        const parsedData = JSON.parse(
+          Array.isArray(params.data) ? params.data[0] : params.data
+        );
         setResultData(parsedData);
       } catch (error) {
         console.error('Error parsing data:', error);
@@ -51,7 +66,7 @@ export default function ResultScreen() {
               </View>
               <View style={styles.parameter}>
                 <Text style={styles.parameterLabel}>Phosphorus (P)</Text>
-                <Text style={styles.parameterValue}>{resultData?.phosphorus || 'N/A'}</Text>
+                <Text style={styles.parameterValue}>{resultData?.phosphorous || 'N/A'}</Text>
               </View>
               <View style={styles.parameter}>
                 <Text style={styles.parameterLabel}>Potassium (K)</Text>
@@ -95,7 +110,7 @@ export default function ResultScreen() {
             </View>
             <View style={styles.parameter}>
               <Text style={styles.parameterLabel}>Phosphorus (P)</Text>
-              <Text style={styles.parameterValue}>{resultData?.phosphorus || 'N/A'}</Text>
+              <Text style={styles.parameterValue}>{resultData?.phosphorous || 'N/A'}</Text>
             </View>
             <View style={styles.parameter}>
               <Text style={styles.parameterLabel}>Potassium (K)</Text>

@@ -3,9 +3,7 @@ import { View, StyleSheet, ScrollView, Alert } from 'react-native';
 import { TextInput, Button, Text, Title, useTheme, HelperText } from 'react-native-paper';
 import { router } from 'expo-router';
 import axios from 'axios';
-
-// Base URL for the backend
-const BASE_URL = 'http://192.168.1.100:5000';
+import { API_BASE_URL } from './config';
 
 export default function FertilizerScreen() {
   const theme = useTheme();
@@ -30,11 +28,23 @@ export default function FertilizerScreen() {
     return true;
   };
 
-  const getFertilizerRecommendation = async (data) => {
+  const getFertilizerRecommendation = async (data: {
+    cropname: string;
+    nitrogen: number;
+    phosphorous: number;
+    pottasium: number;
+  }) => {
     try {
-      const response = await axios.post(`${BASE_URL}/fertilizer-predict`, data, {
+      const formData = new FormData();
+      formData.append('cropname', data.cropname);
+      formData.append('nitrogen', data.nitrogen.toString());
+      formData.append('phosphorous', data.phosphorous.toString());
+      formData.append('pottasium', data.pottasium.toString());
+  
+      const response = await axios.post(`${API_BASE_URL}/api/fertilizer-predict`, formData, {
         headers: {
-          'Content-Type': 'application/json',
+          'Content-Type': 'multipart/form-data',
+          'Accept': 'application/json',
         },
       });
       return response.data;
@@ -68,7 +78,13 @@ export default function FertilizerScreen() {
         pathname: "/result",
         params: { 
           type: 'fertilizer',
-          data: JSON.stringify(response)
+          data: JSON.stringify({
+            recommendation: response.recommendation,
+            crop: cropName,
+            nitrogen: nitrogen,
+            phosphorous: phosphorous,
+            potassium: potassium
+          })
         }
       });
     } catch (error) {

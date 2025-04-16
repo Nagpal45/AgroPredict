@@ -4,13 +4,11 @@ import { Button, Text, Title, useTheme, ActivityIndicator } from 'react-native-p
 import { router } from 'expo-router';
 import * as ImagePicker from 'expo-image-picker';
 import axios from 'axios';
-
-// Base URL for the backend
-const BASE_URL = 'http://192.168.1.100:5000';
+import { API_BASE_URL } from './config';
 
 export default function DiseaseScreen() {
   const theme = useTheme();
-  const [image, setImage] = useState(null);
+  const [image, setImage] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
   const pickImage = async () => {
@@ -62,7 +60,7 @@ export default function DiseaseScreen() {
     }
   };
 
-  const detectDisease = async (imageUri) => {
+  const detectDisease = async (imageUri: string) => {
     try {
       const formData = new FormData();
       
@@ -70,14 +68,14 @@ export default function DiseaseScreen() {
       const uriParts = imageUri.split('/');
       const fileName = uriParts[uriParts.length - 1];
       
-      // Append the image to the form data
+      // Correctly append the image file to the form data
       formData.append('file', {
         uri: imageUri,
         name: fileName,
-        type: 'image/jpeg', // Adjust this based on your image type
-      });
-
-      const response = await axios.post(`${BASE_URL}/disease-predict`, formData, {
+        type: 'image/jpeg'
+      } as any);
+  
+      const response = await axios.post(`${API_BASE_URL}/api/disease-predict`, formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
