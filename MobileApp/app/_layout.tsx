@@ -1,10 +1,11 @@
 import React, { useEffect } from 'react';
-import { Tabs } from 'expo-router';
+import { Tabs, usePathname } from 'expo-router';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { PaperProvider, MD3LightTheme as DefaultTheme } from 'react-native-paper';
 import { StatusBar } from 'expo-status-bar';
 import '../constants/i18n'; // Import i18n setup
 import { useTranslation } from 'react-i18next';
+import * as Speech from 'expo-speech';
 
 // Define theme
 const theme = {
@@ -18,6 +19,13 @@ const theme = {
 
 export default function TabLayout() {
   const { t } = useTranslation(); // Initialize the translation hook
+  const pathname = usePathname();
+  
+  // Stop TTS when tab changes
+  useEffect(() => {
+    // Stop speech when route changes
+    Speech.stop();
+  }, [pathname]);
 
   return (
     <PaperProvider theme={theme}>

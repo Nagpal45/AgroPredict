@@ -6,6 +6,8 @@ import axios from 'axios';
 import { API_BASE_URL } from './config';
 import { useTranslation } from 'react-i18next';
 import LanguageSelector from '../components/LanguageSelector';
+import SpeechButton from '../components/SpeechButton';
+import usePageContent from '../hooks/usePageContent';
 
 // Base URL for the backend
 const BASE_URL = 'http://192.168.1.3:5000';
@@ -21,6 +23,7 @@ export default function CropScreen() {
   const [city, setCity] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const { getContent } = usePageContent({ pageName: 'crop' });
 
   const validateInputs = () => {
     if (!nitrogen || !phosphorous || !potassium || !ph || !rainfall || !city) {
@@ -114,80 +117,88 @@ export default function CropScreen() {
   };
 
   return (
-    <ScrollView style={styles.container}>
-      <LanguageSelector />
-      <View style={styles.content}>
-        <Title style={styles.title}>{t('crop.title')}</Title>
-        <Text style={styles.subtitle}>
-          {t('crop.description')}
-        </Text>
+    <View style={styles.container}>
+      <ScrollView style={styles.scrollView}>
+        <LanguageSelector />
+        <View style={styles.content}>
+          <Title style={styles.title}>{t('crop.title')}</Title>
+          <Text style={styles.subtitle}>
+            {t('crop.description')}
+          </Text>
 
-        <TextInput
-          label={t('crop.inputLabels.nitrogen')}
-          value={nitrogen}
-          onChangeText={setNitrogen}
-          style={styles.input}
-          keyboardType="numeric"
-          mode="outlined"
-        />
-        
-        <TextInput
-          label={t('crop.inputLabels.phosphorus')}
-          value={phosphorous}
-          onChangeText={setPhosphorous}
-          style={styles.input}
-          keyboardType="numeric"
-          mode="outlined"
-        />
-        
-        <TextInput
-          label={t('crop.inputLabels.potassium')}
-          value={potassium}
-          onChangeText={setPotassium}
-          style={styles.input}
-          keyboardType="numeric"
-          mode="outlined"
-        />
-        
-        <TextInput
-          label={t('crop.inputLabels.ph')}
-          value={ph}
-          onChangeText={setPh}
-          style={styles.input}
-          keyboardType="numeric"
-          mode="outlined"
-        />
-        
-        <TextInput
-          label={t('crop.inputLabels.rainfall')}
-          value={rainfall}
-          onChangeText={setRainfall}
-          style={styles.input}
-          keyboardType="numeric"
-          mode="outlined"
-        />
-        
-        <TextInput
-          label={t('crop.inputLabels.city')}
-          value={city}
-          onChangeText={setCity}
-          style={styles.input}
-          mode="outlined"
-        />
+          <TextInput
+            label={t('crop.inputLabels.nitrogen')}
+            value={nitrogen}
+            onChangeText={setNitrogen}
+            style={styles.input}
+            keyboardType="numeric"
+            mode="outlined"
+          />
+          
+          <TextInput
+            label={t('crop.inputLabels.phosphorus')}
+            value={phosphorous}
+            onChangeText={setPhosphorous}
+            style={styles.input}
+            keyboardType="numeric"
+            mode="outlined"
+          />
+          
+          <TextInput
+            label={t('crop.inputLabels.potassium')}
+            value={potassium}
+            onChangeText={setPotassium}
+            style={styles.input}
+            keyboardType="numeric"
+            mode="outlined"
+          />
+          
+          <TextInput
+            label={t('crop.inputLabels.ph')}
+            value={ph}
+            onChangeText={setPh}
+            style={styles.input}
+            keyboardType="numeric"
+            mode="outlined"
+          />
+          
+          <TextInput
+            label={t('crop.inputLabels.rainfall')}
+            value={rainfall}
+            onChangeText={setRainfall}
+            style={styles.input}
+            keyboardType="numeric"
+            mode="outlined"
+          />
+          
+          <TextInput
+            label={t('crop.inputLabels.city')}
+            value={city}
+            onChangeText={setCity}
+            style={styles.input}
+            mode="outlined"
+          />
 
-        {error ? <HelperText type="error">{error}</HelperText> : null}
+          {error ? <HelperText type="error">{error}</HelperText> : null}
+          
+          <Button
+            mode="contained"
+            onPress={handleSubmit}
+            style={[styles.button, { backgroundColor: theme.colors.primary }]}
+            loading={loading}
+            disabled={loading}
+          >
+            {t('crop.getRecommendation')}
+          </Button>
+        </View>
         
-        <Button
-          mode="contained"
-          onPress={handleSubmit}
-          style={[styles.button, { backgroundColor: theme.colors.primary }]}
-          loading={loading}
-          disabled={loading}
-        >
-          {t('crop.getRecommendation')}
-        </Button>
-      </View>
-    </ScrollView>
+        {/* Add padding at the bottom to avoid content being hidden behind the speech button */}
+        <View style={styles.bottomPadding} />
+      </ScrollView>
+      
+      {/* Place the speech button outside the ScrollView so it's always visible */}
+      <SpeechButton pageContent={getContent()} />
+    </View>
   );
 }
 
@@ -195,6 +206,9 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#f5f5f5',
+  },
+  scrollView: {
+    flex: 1,
   },
   content: {
     padding: 20,
@@ -219,5 +233,8 @@ const styles = StyleSheet.create({
   button: {
     marginTop: 20,
     paddingVertical: 6,
+  },
+  bottomPadding: {
+    height: 80, // Provide space at the bottom so content isn't hidden behind the button
   },
 }); 

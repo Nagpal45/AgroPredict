@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import { View, StyleSheet, ScrollView } from 'react-native';
+import { View, StyleSheet, ScrollView, Image } from 'react-native';
 import { Card, Title, Text, Button, useTheme } from 'react-native-paper';
-import { useLocalSearchParams, useRouter } from 'expo-router';
+import { useLocalSearchParams, router } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import LanguageSelector from '../components/LanguageSelector';
+import SpeechButton from '../components/SpeechButton';
+import usePageContent from '../hooks/usePageContent';
 
 interface ResultData {
   prediction: string;
@@ -20,23 +22,50 @@ interface ResultData {
 
 export default function ResultScreen() {
   const params = useLocalSearchParams();
-  const router = useRouter();
   const theme = useTheme();
   const { t } = useTranslation();
-  const [resultData, setResultData] = useState<ResultData | null>(null);
-
+  const [result, setResult] = useState<ResultData | null>(null);
+  
   useEffect(() => {
     if (params.data) {
       try {
-        const parsedData = JSON.parse(
-          Array.isArray(params.data) ? params.data[0] : params.data
-        );
-        setResultData(parsedData);
+        const parsedData = JSON.parse(params.data as string);
+        setResult(parsedData);
       } catch (error) {
-        console.error('Error parsing data:', error);
+        console.error('Error parsing result data:', error);
       }
     }
-  }, [params.data]);
+  }, [params]);
+
+  // Prepare content for the text-to-speech
+  const { getContent } = usePageContent({ 
+    pageName: 'result', 
+    pageData: { 
+      result: result ? {
+        recommendation: result.prediction || '',
+        details: getResultDetails(result)
+      } : null
+    } 
+  });
+  
+  // Function to get detailed text based on result type
+  function getResultDetails(result) {
+    if (!result) return '';
+    
+    // Extract result type from params
+    const type = params.type;
+    
+    switch (type) {
+      case 'crop':
+        return `Based on soil values - Nitrogen: ${result.nitrogen}, Phosphorus: ${result.phosphorous}, Potassium: ${result.potassium}, pH: ${result.ph}, Rainfall: ${result.rainfall}`;
+      case 'fertilizer':
+        return `Based on soil values - Nitrogen: ${result.nitrogen}, Phosphorus: ${result.phosphorous}, Potassium: ${result.potassium}, Crop: ${result.cropType}, Soil type: ${result.soilType}`;
+      case 'disease':
+        return `Disease diagnosis based on plant image analysis.`;
+      default:
+        return '';
+    }
+  }
 
   const renderCropResult = () => {
     return (
@@ -44,13 +73,13 @@ export default function ResultScreen() {
         <Card style={styles.card}>
           <Card.Content>
             <Title style={styles.resultTitle}>{t('result.recommendationTitle')}</Title>
-            <Text style={styles.resultValue}>{resultData?.prediction || 'Not available'}</Text>
+            <Text style={styles.resultValue}>{result?.prediction || 'Not available'}</Text>
             
             <View style={styles.divider} />
             
             <Text style={styles.description}>
               Based on your soil conditions and the weather in your area, we recommend
-              planting {resultData?.prediction || 'the crops listed above'}.
+              planting {result?.prediction || 'the crops listed above'}.
             </Text>
             <Text style={styles.subtitle}>
               This recommendation is based on nitrogen, phosphorus, potassium levels, pH, 
@@ -65,23 +94,23 @@ export default function ResultScreen() {
             <View style={styles.parametersContainer}>
               <View style={styles.parameter}>
                 <Text style={styles.parameterLabel}>{t('crop.inputLabels.nitrogen')}</Text>
-                <Text style={styles.parameterValue}>{resultData?.nitrogen || 'N/A'}</Text>
+                <Text style={styles.parameterValue}>{result?.nitrogen || 'N/A'}</Text>
               </View>
               <View style={styles.parameter}>
                 <Text style={styles.parameterLabel}>{t('crop.inputLabels.phosphorus')}</Text>
-                <Text style={styles.parameterValue}>{resultData?.phosphorous || 'N/A'}</Text>
+                <Text style={styles.parameterValue}>{result?.phosphorous || 'N/A'}</Text>
               </View>
               <View style={styles.parameter}>
                 <Text style={styles.parameterLabel}>{t('crop.inputLabels.potassium')}</Text>
-                <Text style={styles.parameterValue}>{resultData?.potassium || 'N/A'}</Text>
+                <Text style={styles.parameterValue}>{result?.potassium || 'N/A'}</Text>
               </View>
               <View style={styles.parameter}>
                 <Text style={styles.parameterLabel}>{t('crop.inputLabels.ph')}</Text>
-                <Text style={styles.parameterValue}>{resultData?.ph || 'N/A'}</Text>
+                <Text style={styles.parameterValue}>{result?.ph || 'N/A'}</Text>
               </View>
               <View style={styles.parameter}>
                 <Text style={styles.parameterLabel}>{t('crop.inputLabels.rainfall')}</Text>
-                <Text style={styles.parameterValue}>{resultData?.rainfall || 'N/A'} mm</Text>
+                <Text style={styles.parameterValue}>{result?.rainfall || 'N/A'} mm</Text>
               </View>
             </View>
           </Card.Content>
@@ -96,7 +125,7 @@ export default function ResultScreen() {
         <Card.Content>
           <Title style={styles.resultTitle}>Fertilizer Recommendation</Title>
           <Text style={styles.description}>
-            {resultData?.recommendation || 'No specific recommendation available.'}
+            {result?.recommendation || 'No specific recommendation available.'}
           </Text>
           
           <View style={styles.divider} />
@@ -105,19 +134,19 @@ export default function ResultScreen() {
           <View style={styles.parametersContainer}>
             <View style={styles.parameter}>
               <Text style={styles.parameterLabel}>Crop</Text>
-              <Text style={styles.parameterValue}>{resultData?.crop || 'N/A'}</Text>
+              <Text style={styles.parameterValue}>{result?.crop || 'N/A'}</Text>
             </View>
             <View style={styles.parameter}>
               <Text style={styles.parameterLabel}>Nitrogen (N)</Text>
-              <Text style={styles.parameterValue}>{resultData?.nitrogen || 'N/A'}</Text>
+              <Text style={styles.parameterValue}>{result?.nitrogen || 'N/A'}</Text>
             </View>
             <View style={styles.parameter}>
               <Text style={styles.parameterLabel}>Phosphorus (P)</Text>
-              <Text style={styles.parameterValue}>{resultData?.phosphorous || 'N/A'}</Text>
+              <Text style={styles.parameterValue}>{result?.phosphorous || 'N/A'}</Text>
             </View>
             <View style={styles.parameter}>
               <Text style={styles.parameterLabel}>Potassium (K)</Text>
-              <Text style={styles.parameterValue}>{resultData?.potassium || 'N/A'}</Text>
+              <Text style={styles.parameterValue}>{result?.potassium || 'N/A'}</Text>
             </View>
           </View>
         </Card.Content>
@@ -134,13 +163,13 @@ export default function ResultScreen() {
           <View style={styles.divider} />
           
           <Text style={styles.sectionTitle}>Diagnosis:</Text>
-          <Text style={styles.resultValue}>{resultData?.disease || 'Healthy'}</Text>
+          <Text style={styles.resultValue}>{result?.disease || 'Healthy'}</Text>
           
           <View style={styles.divider} />
           
           <Text style={styles.sectionTitle}>Recommendation:</Text>
           <Text style={styles.description}>
-            {resultData?.recommendation || 'No specific recommendation available.'}
+            {result?.recommendation || 'No specific recommendation available.'}
           </Text>
         </Card.Content>
       </Card>
@@ -148,7 +177,7 @@ export default function ResultScreen() {
   };
 
   const renderResult = () => {
-    if (!resultData) {
+    if (!result) {
       return <Text>No result data available</Text>;
     }
 
@@ -165,22 +194,41 @@ export default function ResultScreen() {
   };
 
   return (
-    <ScrollView style={styles.container}>
-      <LanguageSelector />
-      <View style={styles.content}>
-        <Title style={styles.title}>{t('result.title')}</Title>
+    <View style={styles.container}>
+      <ScrollView style={styles.scrollView}>
+        <LanguageSelector />
+        <View style={styles.content}>
+          <Title style={styles.title}>{t('result.title')}</Title>
+          
+          {renderResult()}
+          
+          <View style={styles.buttonContainer}>
+            <Button
+              mode="contained"
+              onPress={() => router.navigate('/')}
+              style={[styles.button, { backgroundColor: theme.colors.primary }]}
+            >
+              {t('result.backToHome')}
+            </Button>
+            
+            <Button
+              mode="outlined"
+              onPress={() => router.back()}
+              style={styles.button}
+              textColor={theme.colors.primary}
+            >
+              {t('result.tryAgain')}
+            </Button>
+          </View>
+        </View>
         
-        {renderResult()}
-        
-        <Button
-          mode="contained"
-          onPress={() => router.back()}
-          style={[styles.button, { backgroundColor: theme.colors.primary }]}
-        >
-          {t('result.backToHome')}
-        </Button>
-      </View>
-    </ScrollView>
+        {/* Add padding at the bottom to avoid content being hidden behind the speech button */}
+        <View style={styles.bottomPadding} />
+      </ScrollView>
+      
+      {/* Place the speech button outside the ScrollView so it's always visible */}
+      <SpeechButton pageContent={getContent()} />
+    </View>
   );
 }
 
@@ -188,6 +236,9 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#f5f5f5',
+  },
+  scrollView: {
+    flex: 1,
   },
   content: {
     padding: 20,
@@ -262,5 +313,13 @@ const styles = StyleSheet.create({
   button: {
     marginTop: 20,
     paddingVertical: 6,
+  },
+  buttonContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginTop: 20,
+  },
+  bottomPadding: {
+    height: 80, // Provide space at the bottom so content isn't hidden behind the button
   },
 }); 

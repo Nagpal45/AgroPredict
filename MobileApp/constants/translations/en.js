@@ -31,8 +31,6 @@ export default {
       nitrogen: 'Nitrogen (N)',
       phosphorus: 'Phosphorus (P)',
       potassium: 'Potassium (K)',
-      temperature: 'Temperature (°C)',
-      humidity: 'Humidity (%)',
       ph: 'pH Value',
       rainfall: 'Rainfall (mm)',
       city: 'City (for weather data)'
@@ -44,11 +42,10 @@ export default {
     title: 'Fertilizer Recommendation',
     description: 'Get fertilizer recommendations based on soil conditions',
     inputLabels: {
+      cropType: 'Crop Type',
       nitrogen: 'Nitrogen (N)',
       phosphorus: 'Phosphorus (P)',
       potassium: 'Potassium (K)',
-      cropType: 'Crop Type',
-      soilType: 'Soil Type'
     },
     getRecommendation: 'Get Recommendation',
     inputHelp: 'Enter soil nutrient values and select crop type'
@@ -73,6 +70,9 @@ export default {
     error: 'An error occurred',
     retry: 'Retry',
     submit: 'Submit',
-    cancel: 'Cancel'
+    cancel: 'Cancel',
+    readAloud: 'Read Aloud',
+    stopReading: 'Stop Reading',
+    ttsNotAvailable: 'Text-to-speech not available'
   }
 }; 

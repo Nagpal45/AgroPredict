@@ -1,11 +1,14 @@
 import React, { useState } from 'react';
 import { View, StyleSheet, ScrollView, Alert } from 'react-native';
-import { TextInput, Button, Text, Title, useTheme, HelperText } from 'react-native-paper';
+import { TextInput, Button, Text, Title, useTheme, HelperText, Dropdown } from 'react-native-paper';
 import { router } from 'expo-router';
+import { Picker } from '@react-native-picker/picker';
 import axios from 'axios';
 import { API_BASE_URL } from './config';
 import { useTranslation } from 'react-i18next';
 import LanguageSelector from '../components/LanguageSelector';
+import SpeechButton from '../components/SpeechButton';
+import usePageContent from '../hooks/usePageContent';
 
 export default function FertilizerScreen() {
   const theme = useTheme();
@@ -14,8 +17,11 @@ export default function FertilizerScreen() {
   const [nitrogen, setNitrogen] = useState('');
   const [phosphorous, setPhosphorous] = useState('');
   const [potassium, setPotassium] = useState('');
+  const [cropType, setCropType] = useState('');
+  const [soilType, setSoilType] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const { getContent } = usePageContent({ pageName: 'fertilizer' });
 
   const validateInputs = () => {
     if (!cropName || !nitrogen || !phosphorous || !potassium) {
@@ -100,63 +106,71 @@ export default function FertilizerScreen() {
   };
 
   return (
-    <ScrollView style={styles.container}>
-      <LanguageSelector />
-      <View style={styles.content}>
-        <Title style={styles.title}>{t('fertilizer.title')}</Title>
-        <Text style={styles.subtitle}>
-          {t('fertilizer.description')}
-        </Text>
+    <View style={styles.container}>
+      <ScrollView style={styles.scrollView}>
+        <LanguageSelector />
+        <View style={styles.content}>
+          <Title style={styles.title}>{t('fertilizer.title')}</Title>
+          <Text style={styles.subtitle}>
+            {t('fertilizer.description')}
+          </Text>
 
-        <TextInput
-          label={t('fertilizer.inputLabels.cropType')}
-          value={cropName}
-          onChangeText={setCropName}
-          style={styles.input}
-          mode="outlined"
-          placeholder="e.g., rice, maize, apple"
-        />
-        
-        <TextInput
-          label={t('fertilizer.inputLabels.nitrogen')}
-          value={nitrogen}
-          onChangeText={setNitrogen}
-          style={styles.input}
-          keyboardType="numeric"
-          mode="outlined"
-        />
-        
-        <TextInput
-          label={t('fertilizer.inputLabels.phosphorus')}
-          value={phosphorous}
-          onChangeText={setPhosphorous}
-          style={styles.input}
-          keyboardType="numeric"
-          mode="outlined"
-        />
-        
-        <TextInput
-          label={t('fertilizer.inputLabels.potassium')}
-          value={potassium}
-          onChangeText={setPotassium}
-          style={styles.input}
-          keyboardType="numeric"
-          mode="outlined"
-        />
+          <TextInput
+            label={t('fertilizer.inputLabels.cropType')}
+            value={cropName}
+            onChangeText={setCropName}
+            style={styles.input}
+            mode="outlined"
+            placeholder="e.g., rice, maize, apple"
+          />
+          
+          <TextInput
+            label={t('fertilizer.inputLabels.nitrogen')}
+            value={nitrogen}
+            onChangeText={setNitrogen}
+            style={styles.input}
+            keyboardType="numeric"
+            mode="outlined"
+          />
+          
+          <TextInput
+            label={t('fertilizer.inputLabels.phosphorus')}
+            value={phosphorous}
+            onChangeText={setPhosphorous}
+            style={styles.input}
+            keyboardType="numeric"
+            mode="outlined"
+          />
+          
+          <TextInput
+            label={t('fertilizer.inputLabels.potassium')}
+            value={potassium}
+            onChangeText={setPotassium}
+            style={styles.input}
+            keyboardType="numeric"
+            mode="outlined"
+          />
 
-        {error ? <HelperText type="error">{error}</HelperText> : null}
+          {error ? <HelperText type="error">{error}</HelperText> : null}
+          
+          <Button
+            mode="contained"
+            onPress={handleSubmit}
+            style={[styles.button, { backgroundColor: theme.colors.primary }]}
+            loading={loading}
+            disabled={loading}
+          >
+            {t('fertilizer.getRecommendation')}
+          </Button>
+        </View>
         
-        <Button
-          mode="contained"
-          onPress={handleSubmit}
-          style={[styles.button, { backgroundColor: theme.colors.primary }]}
-          loading={loading}
-          disabled={loading}
-        >
-          {t('fertilizer.getRecommendation')}
-        </Button>
-      </View>
-    </ScrollView>
+        {/* Add padding at the bottom to avoid content being hidden behind the speech button */}
+        <View style={styles.bottomPadding} />
+      </ScrollView>
+      
+      {/* Place the speech button outside the ScrollView so it's always visible */}
+      <SpeechButton pageContent={getContent()} />
+    </View>
   );
 }
 
@@ -164,6 +178,9 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#f5f5f5',
+  },
+  scrollView: {
+    flex: 1,
   },
   content: {
     padding: 20,
@@ -188,5 +205,8 @@ const styles = StyleSheet.create({
   button: {
     marginTop: 20,
     paddingVertical: 6,
+  },
+  bottomPadding: {
+    height: 80, // Provide space at the bottom so content isn't hidden behind the button
   },
 }); 

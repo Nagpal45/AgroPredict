@@ -31,8 +31,6 @@ export default {
       nitrogen: 'नाइट्रोजन (N)',
       phosphorus: 'फॉस्फोरस (P)',
       potassium: 'पोटैशियम (K)',
-      temperature: 'तापमान (°C)',
-      humidity: 'आर्द्रता (%)',
       ph: 'पीएच मान',
       rainfall: 'वर्षा (मिमी)',
       city: 'शहर (मौसम डेटा के लिए)'
@@ -44,11 +42,10 @@ export default {
     title: 'उर्वरक अनुशंसा',
     description: 'मिट्टी की स्थिति के आधार पर उर्वरक की सिफारिशें प्राप्त करें',
     inputLabels: {
+      cropType: 'फसल प्रकार',
       nitrogen: 'नाइट्रोजन (N)',
       phosphorus: 'फॉस्फोरस (P)',
       potassium: 'पोटैशियम (K)',
-      cropType: 'फसल प्रकार',
-      soilType: 'मिट्टी का प्रकार'
     },
     getRecommendation: 'अनुशंसा प्राप्त करें',
     inputHelp: 'मिट्टी के पोषक तत्वों के मान दर्ज करें और फसल प्रकार का चयन करें'
@@ -73,6 +70,9 @@ export default {
     error: 'एक त्रुटि हुई',
     retry: 'पुन: प्रयास करें',
     submit: 'जमा करें',
-    cancel: 'रद्द करें'
+    cancel: 'रद्द करें',
+    readAloud: 'जोर से पढ़ें',
+    stopReading: 'पढ़ना बंद करें',
+    ttsNotAvailable: 'टेक्स्ट-टू-स्पीच उपलब्ध नहीं है'
   }
 }; 

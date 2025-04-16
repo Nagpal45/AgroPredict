@@ -1,18 +1,21 @@
 import React, { useState } from 'react';
 import { View, StyleSheet, Image, ScrollView, Alert } from 'react-native';
-import { Button, Text, Title, useTheme, ActivityIndicator } from 'react-native-paper';
+import { Button, Text, Title, useTheme, ActivityIndicator, Card } from 'react-native-paper';
 import { router } from 'expo-router';
 import * as ImagePicker from 'expo-image-picker';
 import axios from 'axios';
 import { API_BASE_URL } from './config';
 import { useTranslation } from 'react-i18next';
 import LanguageSelector from '../components/LanguageSelector';
+import SpeechButton from '../components/SpeechButton';
+import usePageContent from '../hooks/usePageContent';
 
 export default function DiseaseScreen() {
   const theme = useTheme();
   const { t } = useTranslation();
   const [image, setImage] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const { getContent } = usePageContent({ pageName: 'disease' });
 
   const pickImage = async () => {
     // Request permission to access the media library
@@ -122,60 +125,68 @@ export default function DiseaseScreen() {
   };
 
   return (
-    <ScrollView style={styles.container}>
-      <LanguageSelector />
-      <View style={styles.content}>
-        <Title style={styles.title}>{t('disease.title')}</Title>
-        <Text style={styles.subtitle}>
-          {t('disease.description')}
-        </Text>
+    <View style={styles.container}>
+      <ScrollView style={styles.scrollView}>
+        <LanguageSelector />
+        <View style={styles.content}>
+          <Title style={styles.title}>{t('disease.title')}</Title>
+          <Text style={styles.subtitle}>
+            {t('disease.description')}
+          </Text>
 
-        <View style={styles.imageContainer}>
-          {image ? (
-            <Image source={{ uri: image }} style={styles.image} />
+          <View style={styles.imageContainer}>
+            {image ? (
+              <Image source={{ uri: image }} style={styles.image} />
+            ) : (
+              <View style={styles.placeholderImage}>
+                <Text style={styles.placeholderText}>{t('disease.instructions')}</Text>
+              </View>
+            )}
+          </View>
+
+          <View style={styles.buttonContainer}>
+            <Button
+              mode="outlined"
+              onPress={pickImage}
+              style={styles.button}
+              icon="image"
+              disabled={loading}
+            >
+              {t('disease.uploadImage')}
+            </Button>
+            
+            <Button
+              mode="outlined"
+              onPress={takePhoto}
+              style={styles.button}
+              icon="camera"
+              disabled={loading}
+            >
+              {t('disease.takePhoto')}
+            </Button>
+          </View>
+
+          {loading ? (
+            <ActivityIndicator animating={true} color={theme.colors.primary} size="large" style={styles.loader} />
           ) : (
-            <View style={styles.placeholderImage}>
-              <Text style={styles.placeholderText}>{t('disease.instructions')}</Text>
-            </View>
+            <Button
+              mode="contained"
+              onPress={analyzeImage}
+              style={[styles.analyzeButton, { backgroundColor: theme.colors.primary }]}
+              disabled={!image || loading}
+            >
+              {t('disease.analyze')}
+            </Button>
           )}
         </View>
-
-        <View style={styles.buttonContainer}>
-          <Button
-            mode="outlined"
-            onPress={pickImage}
-            style={styles.button}
-            icon="image"
-            disabled={loading}
-          >
-            {t('disease.uploadImage')}
-          </Button>
-          
-          <Button
-            mode="outlined"
-            onPress={takePhoto}
-            style={styles.button}
-            icon="camera"
-            disabled={loading}
-          >
-            {t('disease.takePhoto')}
-          </Button>
-        </View>
-
-        {loading ? (
-          <ActivityIndicator animating={true} color={theme.colors.primary} size="large" style={styles.loader} />
-        ) : (
-          <Button
-            mode="contained"
-            onPress={analyzeImage}
-            style={[styles.analyzeButton, { backgroundColor: theme.colors.primary }]}
-            disabled={!image || loading}
-          >
-            {t('disease.analyze')}
-          </Button>
-        )}
-      </View>
-    </ScrollView>
+        
+        {/* Add padding at the bottom to avoid content being hidden behind the speech button */}
+        <View style={styles.bottomPadding} />
+      </ScrollView>
+      
+      {/* Place the speech button outside the ScrollView so it's always visible */}
+      <SpeechButton pageContent={getContent()} />
+    </View>
   );
 }
 
@@ -183,6 +194,9 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#f5f5f5',
+  },
+  scrollView: {
+    flex: 1,
   },
   content: {
     padding: 20,
@@ -238,5 +252,8 @@ const styles = StyleSheet.create({
   },
   loader: {
     marginTop: 20,
+  },
+  bottomPadding: {
+    height: 80, // Provide space at the bottom so content isn't hidden behind the button
   },
 }); 
