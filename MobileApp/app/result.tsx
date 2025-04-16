@@ -7,6 +7,10 @@ import LanguageSelector from '../components/LanguageSelector';
 import SpeechButton from '../components/SpeechButton';
 import usePageContent from '../hooks/usePageContent';
 
+interface PageContentHook {
+  getContent: () => string;
+}
+
 interface ResultData {
   prediction: string;
   nitrogen: number;
@@ -18,6 +22,8 @@ interface ResultData {
   recommendation: string;
   crop: string;
   disease: string;
+  cropType?: string;
+  soilType?: string;
 }
 
 export default function ResultScreen() {
@@ -41,7 +47,7 @@ export default function ResultScreen() {
     return getResultDetails(result);
   }, [result, params.type]);
   
-  function getResultDetails(result) {
+  function getResultDetails(result: ResultData | null) {
     if (!result) return '';
     
     const type = params.type;
@@ -65,12 +71,13 @@ export default function ResultScreen() {
         result: result ? {
           recommendation: result.prediction || '',
           details: resultDetails
-        } : null
+        } : null,
+        apiResult: result
       } 
     };
   }, [result, resultDetails]);
   
-  const { getContent } = usePageContent(pageContentOptions);
+  const { getContent } = usePageContent(pageContentOptions) as any;
   
   const speechContent = useMemo(() => {
     return getContent();

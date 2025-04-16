@@ -89,11 +89,53 @@ export default function usePageContent({ pageName, pageData = {} }) {
   const generateResultContent = useCallback(() => {
     if (!pageData.result) return t('result.title');
     
-    return [
-      t('result.title'),
-      `${t('result.recommendationTitle')}: ${pageData.result.recommendation}`,
-      `${t('result.detailsTitle')}: ${pageData.result.details}`
-    ].join('. ');
+    let content = [t('result.title')];
+    
+    // Add the basic recommendation and details if available
+    if (pageData.result.recommendation) {
+      content.push(`${t('result.recommendationTitle')}: ${pageData.result.recommendation}`);
+    }
+    
+    if (pageData.result.details) {
+      content.push(`${t('result.detailsTitle')}: ${pageData.result.details}`);
+    }
+    
+    // If we have more specific data in the API response, add it
+    if (pageData.apiResult) {
+      const data = pageData.apiResult;
+      
+      // Add any specific field values that are present
+      if (data.prediction) {
+        content.push(`${t('result.recommendationTitle')}: ${data.prediction}`);
+      }
+      
+      if (data.crop) {
+        content.push(`${t('crop.inputLabels.crop')}: ${data.crop}`);
+      }
+      
+      if (data.disease) {
+        content.push(`${t('disease.title')}: ${data.disease}`);
+      }
+      
+      // Add soil parameters if available
+      const soilParams = [];
+      if (data.nitrogen !== undefined) soilParams.push(`${t('crop.inputLabels.nitrogen')}: ${data.nitrogen}`);
+      if (data.phosphorous !== undefined) soilParams.push(`${t('crop.inputLabels.phosphorus')}: ${data.phosphorous}`);
+      if (data.potassium !== undefined) soilParams.push(`${t('crop.inputLabels.potassium')}: ${data.potassium}`);
+      if (data.ph !== undefined) soilParams.push(`${t('crop.inputLabels.ph')}: ${data.ph}`);
+      if (data.rainfall !== undefined) soilParams.push(`${t('crop.inputLabels.rainfall')}: ${data.rainfall} mm`);
+      
+      if (soilParams.length > 0) {
+        content.push(`${t('result.detailsTitle')}: ${soilParams.join(', ')}`);
+      }
+      
+      // Add recommendation text if available
+      if (data.recommendation) {
+        content.push(data.recommendation);
+      }
+    }
+    
+    return content.join('. ');
   }, [t, pageData]);
   
   // Select the appropriate content generator based on the page name
