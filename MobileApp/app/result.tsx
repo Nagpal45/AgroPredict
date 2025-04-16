@@ -219,15 +219,6 @@ export default function ResultScreen() {
             >
               {t('result.backToHome')}
             </Button>
-            
-            <Button
-              mode="outlined"
-              onPress={() => router.back()}
-              style={styles.button}
-              textColor={theme.colors.primary}
-            >
-              {t('result.tryAgain')}
-            </Button>
           </View>
         </View>
         
@@ -320,6 +311,7 @@ const styles = StyleSheet.create({
   button: {
     marginTop: 20,
     paddingVertical: 6,
+    width: '100%',
   },
   buttonContainer: {
     flexDirection: 'row',
