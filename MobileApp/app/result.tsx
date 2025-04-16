@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import { View, StyleSheet, ScrollView, Image } from 'react-native';
 import { Card, Title, Text, Button, useTheme } from 'react-native-paper';
 import { useLocalSearchParams, router } from 'expo-router';
@@ -35,24 +35,15 @@ export default function ResultScreen() {
         console.error('Error parsing result data:', error);
       }
     }
-  }, [params]);
+  }, [params.data]);
 
-  // Prepare content for the text-to-speech
-  const { getContent } = usePageContent({ 
-    pageName: 'result', 
-    pageData: { 
-      result: result ? {
-        recommendation: result.prediction || '',
-        details: getResultDetails(result)
-      } : null
-    } 
-  });
+  const resultDetails = useMemo(() => {
+    return getResultDetails(result);
+  }, [result, params.type]);
   
-  // Function to get detailed text based on result type
   function getResultDetails(result) {
     if (!result) return '';
     
-    // Extract result type from params
     const type = params.type;
     
     switch (type) {
@@ -66,6 +57,24 @@ export default function ResultScreen() {
         return '';
     }
   }
+
+  const pageContentOptions = useMemo(() => {
+    return { 
+      pageName: 'result', 
+      pageData: { 
+        result: result ? {
+          recommendation: result.prediction || '',
+          details: resultDetails
+        } : null
+      } 
+    };
+  }, [result, resultDetails]);
+  
+  const { getContent } = usePageContent(pageContentOptions);
+  
+  const speechContent = useMemo(() => {
+    return getContent();
+  }, [getContent]);
 
   const renderCropResult = () => {
     return (
@@ -222,12 +231,10 @@ export default function ResultScreen() {
           </View>
         </View>
         
-        {/* Add padding at the bottom to avoid content being hidden behind the speech button */}
         <View style={styles.bottomPadding} />
       </ScrollView>
       
-      {/* Place the speech button outside the ScrollView so it's always visible */}
-      <SpeechButton pageContent={getContent()} />
+      <SpeechButton pageContent={speechContent} />
     </View>
   );
 }
@@ -320,6 +327,6 @@ const styles = StyleSheet.create({
     marginTop: 20,
   },
   bottomPadding: {
-    height: 80, // Provide space at the bottom so content isn't hidden behind the button
+    height: 80,
   },
 }); 
