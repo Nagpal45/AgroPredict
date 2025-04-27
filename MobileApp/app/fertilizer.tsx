@@ -1,18 +1,19 @@
 import React, { useState } from 'react';
 import { View, StyleSheet, ScrollView, Alert } from 'react-native';
-import { TextInput, Button, Text, Title, useTheme, HelperText, Dropdown } from 'react-native-paper';
+import { TextInput, Button, Text, Title, useTheme, HelperText } from 'react-native-paper';
 import { router } from 'expo-router';
-import { Picker } from '@react-native-picker/picker';
 import axios from 'axios';
 import { API_BASE_URL } from './config';
 import { useTranslation } from 'react-i18next';
 import LanguageSelector from '../components/LanguageSelector';
 import SpeechButton from '../components/SpeechButton';
 import usePageContent from '../hooks/usePageContent';
+import useLanguage from '../hooks/useLanguage';
 
 export default function FertilizerScreen() {
   const theme = useTheme();
   const { t } = useTranslation();
+  const { currentLanguage } = useLanguage();
   const [cropName, setCropName] = useState('');
   const [nitrogen, setNitrogen] = useState('');
   const [phosphorous, setPhosphorous] = useState('');
@@ -49,6 +50,7 @@ export default function FertilizerScreen() {
       formData.append('nitrogen', data.nitrogen.toString());
       formData.append('phosphorous', data.phosphorous.toString());
       formData.append('pottasium', data.pottasium.toString());
+      formData.append('language', currentLanguage);
   
       const response = await axios.post(`${API_BASE_URL}/api/fertilizer-predict`, formData, {
         headers: {

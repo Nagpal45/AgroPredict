@@ -9,9 +9,6 @@ import LanguageSelector from '../components/LanguageSelector';
 import SpeechButton from '../components/SpeechButton';
 import usePageContent from '../hooks/usePageContent';
 
-// Base URL for the backend
-const BASE_URL = 'http://192.168.1.3:5000';
-
 export default function CropScreen() {
   const theme = useTheme();
   const { t } = useTranslation();

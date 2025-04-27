@@ -2,7 +2,7 @@ from flask import Flask, redirect, render_template, request
 from markupsafe import Markup
 import numpy as np
 import pandas as pd
-from utils.fertilizer import fertilizer_dic
+from utils.fertilizer import fertilizer_dic, fertilizer_dic_hi
 import requests
 import config
 import pickle
@@ -11,7 +11,7 @@ from torchvision import transforms
 from PIL import Image
 import io
 from utils.model import ResNet9
-from utils.disease import disease_dic
+from utils.disease import disease_dic, disease_dic_hi
 
 crop_recommendation_model_path = '../models/RandomForest.pkl'
 crop_recommendation_model = pickle.load(
@@ -273,12 +273,14 @@ def api_fertilizer_recommendation():
             N = int(request.form['nitrogen'])
             P = int(request.form['phosphorous'])
             K = int(request.form['pottasium'])
+            language = request.form.get('language', 'en')  # Default to English
         else:
             data = request.get_json()
             crop_name = str(data['cropname'])
             N = int(data['nitrogen'])
             P = int(data['phosphorous'])
             K = int(data['pottasium'])
+            language = data.get('language', 'en')  # Default to English
 
         df = pd.read_csv('../Data-processed/fertilizer.csv')
 
@@ -307,8 +309,11 @@ def api_fertilizer_recommendation():
             else:
                 key = "Klow"
 
+        # Choose the appropriate dictionary based on the language
+        recommendation_dict = fertilizer_dic_hi if language == 'hi' else fertilizer_dic
+        
         # Get raw recommendation with HTML tags
-        raw_recommendation = str(fertilizer_dic[key])
+        raw_recommendation = str(recommendation_dict[key])
         
         # Strip HTML tags for API response
         # This pattern removes all HTML tags
@@ -332,6 +337,8 @@ def api_disease_prediction():
             }
             
         file = request.files.get('file')
+        language = request.form.get('language', 'en')  # Default to English
+        
         if not file:
             return {
                 'error': 'No file selected',
@@ -341,7 +348,9 @@ def api_disease_prediction():
         try:
             img = file.read()
             prediction = predict_image(img)
-            result = str(disease_dic[prediction])
+            # Choose the appropriate dictionary based on the language
+            recommendation_dict = disease_dic_hi if language == 'hi' else disease_dic
+            result = str(recommendation_dict[prediction])
             clean_result = re.sub(r'<.*?>', '', result)
             
             return {

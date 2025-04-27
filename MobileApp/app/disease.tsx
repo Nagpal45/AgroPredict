@@ -9,10 +9,12 @@ import { useTranslation } from 'react-i18next';
 import LanguageSelector from '../components/LanguageSelector';
 import SpeechButton from '../components/SpeechButton';
 import usePageContent from '../hooks/usePageContent';
+import useLanguage from '../hooks/useLanguage';
 
 export default function DiseaseScreen() {
   const theme = useTheme();
   const { t } = useTranslation();
+  const { currentLanguage } = useLanguage();
   const [image, setImage] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const { getContent } = usePageContent({ pageName: 'disease' });
@@ -80,6 +82,9 @@ export default function DiseaseScreen() {
         name: fileName,
         type: 'image/jpeg'
       } as any);
+      
+      // Add the current language parameter
+      formData.append('language', currentLanguage);
   
       const response = await axios.post(`${API_BASE_URL}/api/disease-predict`, formData, {
         headers: {
