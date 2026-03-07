@@ -1,6 +1,6 @@
 <div align="center">
   <h1>🌱 AgroPredict</h1>
-  <p>An AI-powered Smart Agriculture Web and Mobile application that provides intelligent crop recommendations, fertilizer suggestions, and plant disease classification using Machine Learning and Deep Learning.</p>
+  <p>Smart Agriculture Web and Mobile application that provides intelligent crop recommendations, fertilizer suggestions, and plant disease classification using Machine Learning and Deep Learning.</p>
 </div>
 
 ---
